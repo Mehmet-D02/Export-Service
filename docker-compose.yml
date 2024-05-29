@@ -1,0 +1,43 @@
+version: '3'
+services:
+  json-to-pdf:
+    build: ./json-to-pdf
+    container_name: json-to-pdf
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+
+  json-to-csv:
+    build: ./json-to-csv
+    container_name: json-to-csv
+    ports:
+      - "3002:3002"
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - json-to-pdf
+      - json-to-csv
+    networks:
+      - app-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8080:3000"
+    depends_on:
+      - json-to-pdf
+      - json-to-csv
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
